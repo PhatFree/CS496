@@ -1,0 +1,175 @@
+SPECjbb2005 bops = 23713, SPECjbb2005 bops/JVM = 23713
+
+Odroid XU4
+Phobos Ltd Phobic Java 1.5.0
+SPEC license # MISSING,  Tested by: Sonoma State,  Test date: Apr 23, 2018
+
+Validity
+No errors.  Valid run.
+
+                   SPEC scores                                                                                        
+     Warehouses               Thrput
+              1                 7249
+              2                12054
+              3                15648
+              4                18149
+              5                18635
+              6                21169
+              7                22815
+            * 8                24047
+            * 9                23861
+           * 10                23795
+           * 11                23613
+           * 12                23539
+           * 13                23692
+           * 14                23632
+           * 15                23538
+           * 16                23701
+                                    
+Throughput      23713               
+
+HARDWARE                                            | SOFTWARE                                                         
+Vendor                    Odroid                    | Vendor               Phobos Ltd                                  
+Vendor URL                http://www.hardkernel.com | Vendor URL           http://www.phobos.uk.co                     
+                          /main/main.php            | JVM Version          Phobic Java 1.5.0                           
+Model                     XU4                       | Command Line         java -ms256m -mx1024m -spec.jbb.JBBmain     
+Processor                 ARM big.LITTLE A15 / A7   |                      -propfile Test1                             
+MHz                       2000 / 1400               | Initial Heap Mem     256                                         
+# of Chips                1                         | (MB)                                     
+# of Cores                8                         | Max Heap Mem (MB)    1024                                        
+# of Cores/Chip           8                         | JVM addressing bits  32                                          
+HW Threading Enabled      No                        | JVM CLASSPATH        ./jbb.jar:./check.jar:                      
+Procs avail to Java       8                         | JVM BOOTCLASSPATH    /usr/java/packages/lib/arm:/usr/lib/arm-linu
+Memory (MB)               2048                      |                      x-gnueabihf/jni:/lib/arm-linux-gnueabihf:/us
+Memory Details            LPDDR3                    |                      r/lib/arm-linux-gnueabihf:/usr/lib/jni:/lib:
+L1 Cache                  32KBI+32KBD               |                      /usr/lib                                    
+L2 Cache                  2MB ECC / 512KB           | OS Version           Phobos DOS V33.333 patch-level 78           
+Other Cache                                         | Other S/W            Neptune JIT Accelerator 2.3b6               
+Filesystem                ext4                      |                                                                  
+Disks                     8GB UHS1 microSD	         | AOT Compilation Details                                          
+Other H/W                 MISSING                   | <p>precompiled code                                              
+                                                    | for<ul><li>Deliverytransaction.process</li><li>TransactionManager
+                                                    | .go</li></ul>loaded at startup</p>                               
+                                                    |                                                                  
+                                                    | TUNING AND NOTES                                                 
+                                                    | Operating system                                                 
+                                                    | tunings<UL><LI>bufcache=1024</LI><LI>maxthreads_per_user=65536</L
+                                                    | I></UL>                                                          
+                                                    |                                                                  
+                                                                                                                       
+TEST INFORMATION                     
+Tested by          Sonoma State      
+SPEC License       MISSING           
+Test Location      Rohnert Park, CA  
+Test Date          Apr 23, 2018      
+JVM available      Jan-2000          
+H/w available      MISSING           
+OS available       May-2000          
+Other s/w          MISSING           
+available                            
+
+* Details of Runs
+
+  Wh.   Score     Tot.     Used  Thread elapsed Trans.           Count Resp. Time (s)
+                  Heap     Heap  spread  > 120s Type                   total max     
+                  (MB)     (MB)%       %                                             
+    1    7249      248       59   <0.01   <0.01 new_order        95547 11.1  .022    
+                                                payment          65906 4.62  .212    
+                                                order_status      6590 .493  <0.01   
+                                                delivery          6591 6.73  .022    
+                                                stock_level       6591 .850  .015    
+                                                cust_report      36268 5.00  .076    
+    2   12054      248      123    .801   <0.01 new_order       158841 20.9  .035    
+                                                payment         109624 8.17  .079    
+                                                order_status     10962 .901  .027    
+                                                delivery         10962 16.0  .155    
+                                                stock_level      10962 1.74  .154    
+                                                cust_report      60400 10.2  .028    
+    3   15648      248      158    1.22   <0.01 new_order       206450 30.8  .041    
+                                                payment         142274 11.5  .077    
+                                                order_status     14227 1.43  .179    
+                                                delivery         14226 25.0  .180    
+                                                stock_level      14226 2.51  .040    
+                                                cust_report      78105 15.7  .041    
+    4   18149      262      221    1.26   <0.01 new_order       239205 40.1  .634    
+                                                payment         165022 15.3  .109    
+                                                order_status     16502 1.78  .052    
+                                                delivery         16503 34.3  .635    
+                                                stock_level      16503 3.89  .634    
+                                                cust_report      90839 20.6  .634    
+    5   18635      321      171    13.2   <0.01 new_order       245676 50.7  1.01    
+                                                payment         169439 19.6  .142    
+                                                order_status     16944 2.34  .073    
+                                                delivery         16943 38.4  .144    
+                                                stock_level      16944 4.73  .995    
+                                                cust_report      93203 28.8  .996    
+    6   21169      379      318    22.8   <0.01 new_order       279079 58.4  .857    
+                                                payment         192486 26.2  .858    
+                                                order_status     19249 2.50  .072    
+                                                delivery         19247 48.4  .859    
+                                                stock_level      19246 4.87  .073    
+                                                cust_report     105877 33.3  .180    
+    7   22815      437      405    28.3   <0.01 new_order       300762 69.0  1.01    
+                                                payment         207441 30.3  1.01    
+                                                order_status     20744 2.98  .090    
+                                                delivery         20743 55.2  1.02    
+                                                stock_level      20744 5.53  .089    
+                                                cust_report     114121 40.6  1.01    
+    8   24047      501      260    7.87   <0.01 new_order      2536116 622   1.22    
+                                                payment        1748932 275   1.22    
+                                                order_status    174895 29.6  1.10    
+                                                delivery        174890 497   1.22    
+                                                stock_level     174892 49.9  .108    
+                                                cust_report     961735 385   1.22    
+    9   23861      521      361    5.08   <0.01 new_order      2516121 715   1.24    
+                                                payment        1735353 300   1.36    
+                                                order_status    173531 33.5  1.34    
+                                                delivery        173532 555   1.34    
+                                                stock_level     173537 57.5  1.22    
+                                                cust_report     954580 425   1.34    
+   10   23795      593      451    4.88   <0.01 new_order      2509850 782   1.41    
+                                                payment        1730552 340   1.38    
+                                                order_status    173056 35.3  1.37    
+                                                delivery        173054 628   1.40    
+                                                stock_level     173055 66.7  1.39    
+                                                cust_report     951253 468   1.42    
+   11   23613      635      318    2.71   <0.01 new_order      2490688 864   1.87    
+                                                payment        1717347 365   1.85    
+                                                order_status    171735 39.6  1.48    
+                                                delivery        171732 711   1.85    
+                                                stock_level     171734 71.2  1.50    
+                                                cust_report     944004 503   1.84    
+   12   23539      691      401    2.46   <0.01 new_order      2482549 935   1.68    
+                                                payment        1711979 395   1.68    
+                                                order_status    171197 41.5  .193    
+                                                delivery        171198 776   1.69    
+                                                stock_level     171198 80.1  1.65    
+                                                cust_report     941432 551   1.66    
+   13   23692      766      626    8.08   <0.01 new_order      2498709 1018  1.83    
+                                                payment        1723064 433   1.83    
+                                                order_status    172302 43.9  .212    
+                                                delivery        172305 829   1.83    
+                                                stock_level     172306 93.2  1.77    
+                                                cust_report     947421 596   1.82    
+   14   23632      866      446    9.63   <0.01 new_order      2492277 1111  2.06    
+                                                payment        1718691 447   2.03    
+                                                order_status    171870 47.6  .232    
+                                                delivery        171867 904   2.06    
+                                                stock_level     171869 98.9  2.02    
+                                                cust_report     945089 639   2.06    
+   15   23538      866      375    12.2    .441 new_order      2493334 1170  2.06    
+                                                payment        1719430 505   2.11    
+                                                order_status    171943 56.8  2.08    
+                                                delivery        171940 980   2.08    
+                                                stock_level     171944 96.5  2.04    
+                                                cust_report     945532 671   2.08    
+   16   23701      915      814    12.6   <0.01 new_order      2498772 1275  2.40    
+                                                payment        1723707 513   2.39    
+                                                order_status    172370 57.8  2.35    
+                                                delivery        172372 1054  2.41    
+                                                stock_level     172372 105   2.14    
+                                                cust_report     948668 712   2.40    
+
+SPECjbb2005 Version: [SPECjbb2005 1.07, March 15, 2006]
+Reporting page (C) Copyright SPEC, 2005. All rights reserved
+
