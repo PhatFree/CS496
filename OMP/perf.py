@@ -9,7 +9,6 @@ def main():
     except:
         print("1 not provided, analyzing only")
         state = 0
-    quit()
     num_of_runs = 3
     max_threads = 8
     chunk_pow_2 = 8
