@@ -29,45 +29,43 @@ def main():
 
     for i in range(num_of_runs):
 
-        for j in range(max_threads):
+        for j in range(1,(max_threads+1)):
 
             # generate file names
             # static
-            stxt = "results/SDG/" + str(i) + "_thread-" + str(j + 1) + "s.txt"
+            stxt = "results/SDG/" + str(i) + "_thread-" + str(j) + "s.txt"
             # dynamic
-            dtxt = "results/SDG/" + str(i) + "_thread-" + str(j + 1) + "d.txt"
+            dtxt = "results/SDG/" + str(i) + "_thread-" + str(j) + "d.txt"
             # guided
-            gtxt = "results/SDG/" + str(i) + "_thread-" + str(j + 1) + "g.txt"
+            gtxt = "results/SDG/" + str(i) + "_thread-" + str(j) + "g.txt"
             # random Dynamic
-            rand = "results/ranD/" + str(i) + "_thread-" + str(j + 1) + "ranD.txt"
+            rand = "results/ranD/" + str(i) + "_thread-" + str(j) + "ranD.txt"
             # call perf stat
-            # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", stxt, "./static", str(j+1)])
-            individual_static_time[i][j] = float(parsefile(stxt, 71, 0))
-            # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", dtxt, "./dynamic", str(j+1)])
-            individual_dynamic_time[i][j] = float(parsefile(dtxt, 71, 0))
-            # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", gtxt, "./guided", str(j+1)])
-            individual_guided_time[i][j] = float(parsefile(gtxt, 71, 0))
-            # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", rand, "./ran_dynamic", str(j+1)])
-            individual_random_dynamic_time[i][j] = float(parsefile(rand, 71, 0))
-            print()
+            subprocess.call(["perf", "stat", "--per-core", "-a", "-o", stxt, "./static", str(j)])
+            individual_static_time[i][j-1] = float(parsefile(stxt, 71, 0))
+            subprocess.call(["perf", "stat", "--per-core", "-a", "-o", dtxt, "./dynamic", str(j)])
+            individual_dynamic_time[i][j-1] = float(parsefile(dtxt, 71, 0))
+            subprocess.call(["perf", "stat", "--per-core", "-a", "-o", gtxt, "./guided", str(j)])
+            individual_guided_time[i][j-1] = float(parsefile(gtxt, 71, 0))
+            subprocess.call(["perf", "stat", "--per-core", "-a", "-o", rand, "./ran_dynamic", str(j)])
+            individual_random_dynamic_time[i][j-1] = float(parsefile(rand, 71, 0))
 
             # chunksize
-            for j in range(max_threads-1):
-                for c in range(chunk_pow_2):
-                    # non random
-                    chunk = "results/chunk/" + str(i) + "_thread-" + str(j+1) + "_chunksize-" + str(c) + "C_D.txt"
-                    # random
-                    #chunkrand = "results/chunk/" + str(i) + "_thread-" + str(j+1) + "_chunksize-" + str(c) + "ranC_D.txt"
-                    subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunk, "./chunk_dynamic", str(j+1), str(2 ** c)])
-                    individual_chunk_size[i][j][c] = float(parsefile(chunk, 71, 0))
-                    #subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunkrand, "./chunk_ran_dynamic", str(j+1), str(2 ** c)])
-                    #parsefile(chunkrand, 71, 0)
-
-            chunk_size_time = np.array(chunk_size_time) + np.array(chunk_size_time[i])
             static_time = np.array(static_time) + np.array(individual_static_time[i])
             dynamic_time = np.array(dynamic_time) + np.array(individual_dynamic_time[i])
             guided_time = np.array(guided_time) + np.array(individual_guided_time[i])
             random_dynamic_time = np.array(random_dynamic_time) + np.array(individual_random_dynamic_time[i])
+    	for j in range(1,(max_threads+1)):
+	    for c in range(chunk_pow_2):
+	    	# non random
+	    	chunk = "results/chunk/" + str(i) + "_thread-" + str(j) + "_chunksize-" + str(c) + "C_D.txt"
+	    	# random
+	    	#chunkrand = "results/chunk/" + str(i) + "_thread-" + str(j+1) + "_chunksize-" + str(c) + "ranC_D.txt"
+	    	subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunk, "./chunk_dynamic", str(j), str(2 ** c)])
+	    	individual_chunk_size[i][j-1][c] = float(parsefile(chunk, 71, 0))
+	    	#subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunkrand, "./chunk_ran_dynamic", str(j+1), str(2 ** c)])
+	    	#parsefile(chunkrand, 71, 0)
+	    chunk_size_time = np.array(chunk_size_time) + np.array(chunk_size_time[i])
         static_time = np.array(static_time) / 3
         dynamic_time = np.array(dynamic_time) / 3
         guided_time = np.array(guided_time) / 3
