@@ -4,12 +4,12 @@ import numpy as np
 
 def main():
     np.set_printoptions(precision=5)
-    try:
-      state = input("please input a 1 to run the tests, leave blank just to analyze")
-      state = 1
-    except:
-        print("1 not provided, analyzing only")
-        state = 0
+    #try:
+    #  state = input("please input a 1 to run the tests, leave blank just to analyze")
+
+    #except:
+    #    print("1 not provided, analyzing only")
+    state = 0
     num_of_runs = 3
     max_threads = 8
     chunk_pow_2 = 8
@@ -20,6 +20,8 @@ def main():
     individual_guided_time = np.zeros([num_of_runs,max_threads])
     individual_random_dynamic_time = np.zeros([num_of_runs,max_threads])
     individual_chunk_size = np.zeros([num_of_runs,chunk_pow_2,max_threads])
+    dynamic_num_instrcuts = np.zeros([num_of_runs,max_threads,max_threads])
+
 
     # aggrogated numbers
     static_time = np.zeros([max_threads])
@@ -30,6 +32,7 @@ def main():
     guided_div = 0
     random_dynamic_time = np.zeros([max_threads])
     rand_dynamic_div = 0
+    dynamic_num_instrcuts_avg = np.zeros([max_threads,max_threads])
 
 
     chunk_size_div = 0
@@ -53,6 +56,16 @@ def main():
             if state == 1:
                 subprocess.call(["perf", "stat", "--per-core", "-a", "-o", dtxt, "./dynamic", str(j)])
             individual_dynamic_time[i][(j - 1)] = float(parsefile(dtxt, 71, 0))
+            dynamic_num_instrcuts[i][j - 1][0] = int(parsefile(dtxt,11,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][1] = int(parsefile(dtxt,19,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][2] = int(parsefile(dtxt,27,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][3] = int(parsefile(dtxt,35,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][4] = int(parsefile(dtxt,43,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][5] = int(parsefile(dtxt,51,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][6] = int(parsefile(dtxt,59,2).replace(',',''))
+            dynamic_num_instrcuts[i][j - 1][7] = int(parsefile(dtxt,67,2).replace(',',''))
+
+
             if state == 1:
                 subprocess.call(["perf", "stat", "--per-core", "-a", "-o", gtxt, "./guided", str(j)])
             individual_guided_time[i][(j - 1)] = float(parsefile(gtxt, 71, 0))
@@ -80,7 +93,8 @@ def main():
             # parsefile(chunkrand, 71, 0)
 
     chunk_size_time = np.mean(individual_chunk_size,axis=0)
-
+    dynamic_num_instrcuts_avg = np.mean(dynamic_num_instrcuts,axis=0)
+    chunk_size_div = np.std(individual_chunk_size)
     static_time = static_time / 3.0
     dynamic_time = dynamic_time / 3.0
     guided_time = guided_time / 3.0
@@ -99,7 +113,9 @@ def main():
     time = np.column_stack((static_time,dynamic_time,guided_time,random_dynamic_time))
     print ("static, dynamic, guided, random dynamic")
     print(time)
+    print(chunk_size_div)
     np.savetxt("results/SDG/static_dynamic_guided.csv", time, delimiter=",")
+    np.savetxt("results/SDG/dynamic_instruct.csv", dynamic_num_instrcuts_avg, delimiter=",")
     np.savetxt("results/chunk/chunksize.csv", chunk_size_time, delimiter=",")
 
 
