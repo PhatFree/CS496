@@ -3,6 +3,7 @@ import numpy as np
 
 
 def main():
+    np.set_printoptions(precision=5)
     try:
       state = input("please input a 1 to run the tests, leave blank just to analyze")
       state = 1
@@ -14,27 +15,27 @@ def main():
     chunk_pow_2 = 8
 
     # init the arrays where the values are stroed
-    individual_static_time = [[0.0 for _ in range(max_threads)] for _ in range(num_of_runs)]
-    individual_dynamic_time = [[0.0 for _ in range(max_threads)] for _ in range(num_of_runs)]
-    individual_guided_time = [[0.0 for _ in range(max_threads)] for _ in range(num_of_runs)]
-    individual_random_dynamic_time = [[0.0 for _ in range(max_threads)] for _ in range(num_of_runs)]
-    individual_chunk_size = [[[0.0 for _ in range(max_threads)] for _ in range(chunk_pow_2)] for _ in
-                             range(num_of_runs)]
+    individual_static_time = np.zeros([num_of_runs,max_threads])
+    individual_dynamic_time = np.zeros([num_of_runs,max_threads])
+    individual_guided_time = np.zeros([num_of_runs,max_threads])
+    individual_random_dynamic_time = np.zeros([num_of_runs,max_threads])
+    individual_chunk_size = np.zeros([num_of_runs,chunk_pow_2,max_threads])
 
     # aggrogated numbers
-    static_time = [0 for _ in range(max_threads)]
+    static_time = np.zeros([max_threads])
     static_div = 0
-    dynamic_time = [0 for _ in range(max_threads)]
+    dynamic_time = np.zeros([max_threads])
     dynamic_div = 0
-    guided_time = [0 for _ in range(max_threads)]
+    guided_time = np.zeros([max_threads])
     guided_div = 0
-    random_dynamic_time = [0 for _ in range(max_threads)]
+    random_dynamic_time = np.zeros([max_threads])
     rand_dynamic_div = 0
-    chunk_size_time = [[0.0 for _ in range(chunk_pow_2)] for _ in range(num_of_runs)]
+
+
     chunk_size_div = 0
 
     for i in range(num_of_runs):
-
+        #do our scheduler math
         for j in range(1, (max_threads + 1)):
             # generate file names
             # static
@@ -59,11 +60,13 @@ def main():
                 subprocess.call(["perf", "stat", "--per-core", "-a", "-o", rand, "./ran_dynamic", str(j)])
             individual_random_dynamic_time[i][(j - 1)] = float(parsefile(rand, 71, 0))
 
-            # chunksize
+
         static_time = np.array(static_time) + np.array(individual_static_time[i])
         dynamic_time = np.array(dynamic_time) + np.array(individual_dynamic_time[i])
         guided_time = np.array(guided_time) + np.array(individual_guided_time[i])
         random_dynamic_time = np.array(random_dynamic_time) + np.array(individual_random_dynamic_time[i])
+
+        # chunksize
         for j in range(1, (max_threads + 1)):
             for c in range(chunk_pow_2):
                 # non random
@@ -75,23 +78,32 @@ def main():
                 individual_chunk_size[i][j - 1][c] = float(parsefile(chunk, 71, 0))
             # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunkrand, "./chunk_ran_dynamic", str(j+1), str(2 ** c)])
             # parsefile(chunkrand, 71, 0)
-            chunk_size_time = np.array(chunk_size_time[i]) + np.array(individual_chunk_size[i])
+
+    chunk_size_time = np.mean(individual_chunk_size,axis=0)
 
     static_time = static_time / 3.0
     dynamic_time = dynamic_time / 3.0
     guided_time = guided_time / 3.0
     random_dynamic_time = random_dynamic_time / 3.0
-    chunk_size_time = chunk_size_time / 3.0
-    print("static time per core:")
-    print(static_time)
-    print("dynamic time per core:")
-    print(dynamic_time)
-    print("guided time per core:")
-    print(guided_time)
-    print("random dynamic time per core:")
-    print(random_dynamic_time)
+
+    #print("static time per core:")
+    #print(static_time)
+    #print("dynamic time per core:")
+    #print(dynamic_time)
+    #print("guided time per core:")
+    #print(guided_time)
+    #print("random dynamic time per core:")
+    #print(random_dynamic_time)
     print("chunk size time per block size per core:")
     print(chunk_size_time)
+    time = np.column_stack((static_time,dynamic_time,guided_time,random_dynamic_time))
+    print ("static, dynamic, guided, random dynamic")
+    print(time)
+    np.savetxt("results/SDG/static_dynamic_guided.csv", time, delimiter=",")
+    np.savetxt("results/chunk/chunksize.csv", chunk_size_time, delimiter=",")
+
+
+
 
 
 def parsefile(filename, line_num, array_pos):
