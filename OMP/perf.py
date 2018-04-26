@@ -21,18 +21,14 @@ def main():
     individual_random_dynamic_time = np.zeros([num_of_runs,max_threads])
     individual_chunk_size = np.zeros([num_of_runs,chunk_pow_2,max_threads])
     dynamic_num_instrcuts = np.zeros([num_of_runs,max_threads,max_threads])
+    chunk_num_instrcuts = np.zeros([num_of_runs,chunk_pow_2,max_threads])
 
 
     # aggrogated numbers
     static_time = np.zeros([max_threads])
-    static_div = 0
     dynamic_time = np.zeros([max_threads])
-    dynamic_div = 0
     guided_time = np.zeros([max_threads])
-    guided_div = 0
     random_dynamic_time = np.zeros([max_threads])
-    rand_dynamic_div = 0
-    dynamic_num_instrcuts_avg = np.zeros([max_threads,max_threads])
 
 
     chunk_size_div = 0
@@ -74,11 +70,6 @@ def main():
             individual_random_dynamic_time[i][(j - 1)] = float(parsefile(rand, 71, 0))
 
 
-        static_time = np.array(static_time) + np.array(individual_static_time[i])
-        dynamic_time = np.array(dynamic_time) + np.array(individual_dynamic_time[i])
-        guided_time = np.array(guided_time) + np.array(individual_guided_time[i])
-        random_dynamic_time = np.array(random_dynamic_time) + np.array(individual_random_dynamic_time[i])
-
         # chunksize
         for j in range(1, (max_threads + 1)):
             for c in range(chunk_pow_2):
@@ -89,16 +80,33 @@ def main():
                 if state == 1:
                     subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunk, "./chunk_dynamic", str(j), str(2 ** c)])
                 individual_chunk_size[i][j - 1][c] = float(parsefile(chunk, 71, 0))
+                if j == 8:
+                    chunk_num_instrcuts[i][c][0] = int(parsefile(chunk, 11, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][1] = int(parsefile(chunk, 19, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][2] = int(parsefile(chunk, 27, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][3] = int(parsefile(chunk, 35, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][4] = int(parsefile(chunk, 43, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][5] = int(parsefile(chunk, 51, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][6] = int(parsefile(chunk, 59, 2).replace(',', ''))
+                    chunk_num_instrcuts[i][c][7] = int(parsefile(chunk, 67, 2).replace(',', ''))
             # subprocess.call(["perf", "stat", "--per-core", "-a", "-o", chunkrand, "./chunk_ran_dynamic", str(j+1), str(2 ** c)])
             # parsefile(chunkrand, 71, 0)
 
     chunk_size_time = np.mean(individual_chunk_size,axis=0)
+    chunk_size_div = np.std(individual_chunk_size, axis=0)
+
+    chunk_size_num_instrcuts_avg = np.mean(chunk_num_instrcuts,axis=0)
     dynamic_num_instrcuts_avg = np.mean(dynamic_num_instrcuts,axis=0)
-    chunk_size_div = np.std(individual_chunk_size)
-    static_time = static_time / 3.0
-    dynamic_time = dynamic_time / 3.0
-    guided_time = guided_time / 3.0
-    random_dynamic_time = random_dynamic_time / 3.0
+    #dynamic_num_instrcuts_div = np.std(dynamic_num_instrcuts,axis=0)
+
+    static_time = np.mean(individual_static_time,axis=0)
+    dynamic_time = np.mean(individual_dynamic_time,axis=0)
+    guided_time = np.mean(individual_guided_time,axis=0)
+    random_dynamic_time = np.mean(individual_random_dynamic_time,axis=0)
+
+    static_time_div  = np.std( individual_static_time,  axis=0)
+    dynamic_time_div = np.std( individual_dynamic_time, axis=0)
+    guided_time_div  = np.std( individual_guided_time,  axis=0)
 
     #print("static time per core:")
     #print(static_time)
@@ -111,12 +119,35 @@ def main():
     print("chunk size time per block size per core:")
     print(chunk_size_time)
     time = np.column_stack((static_time,dynamic_time,guided_time,random_dynamic_time))
+    div = np.column_stack((static_time_div,dynamic_time_div,guided_time_div))
     print ("static, dynamic, guided, random dynamic")
     print(time)
-    print(chunk_size_div)
+
+    print("Min static div:", static_time_div.min())
+    print("Min dynamic div:", dynamic_time_div.min())
+    print("Min guided div:", guided_time_div.min())
+    print("Min of all div:", div.min())
+
+    print( "Max static div:", static_time_div.max())
+    print( "Max dynamic div:", dynamic_time_div.max())
+    print( "Max guided div:", guided_time_div.max())
+    print( "Max of all div:", div.max())
+
+    print("avg static div:", static_time_div.mean())
+    print("avg dynamic div:", dynamic_time_div.mean())
+    print("avg guided div:", guided_time_div.mean())
+    print("avg of all div:", div.mean())
+
+   # print(chunk_size_div)
+    print ("Min chunk size Div:", chunk_size_div.min())
+    print ("Max chunk size Div:",chunk_size_div.max())
+    print( "avg chunk size Div:",chunk_size_div.mean())
+    #print (dynamic_num_instrcuts_div)
+
     np.savetxt("results/SDG/static_dynamic_guided.csv", time, delimiter=",")
     np.savetxt("results/SDG/dynamic_instruct.csv", dynamic_num_instrcuts_avg, delimiter=",")
     np.savetxt("results/chunk/chunksize.csv", chunk_size_time, delimiter=",")
+    np.savetxt("results/chunk/chunk_instruct.csv",chunk_num_instrcuts[0],delimiter=",")
 
 
 
